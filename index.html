@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salary Calendar v2.1</title>
+<style>
+:root{--primary:#4f6ef7;--primary-2:#7c5cf7;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--info:#0ea5e9;--bg:#f3f5fb;--card:#fff;--ink:#1b2231;--muted:#6b7385;--line:#e6e9f2;--soft:#f7f8fc;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1220;--card:#171f2f;--ink:#e8ecf5;--muted:#98a2b6;--line:#26304a;--soft:#1e2739;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.wrap{max-width:900px;margin:auto;padding:16px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(20,30,60,.06);animation:rise .45s ease both;transition:box-shadow .2s}
+.card:hover{box-shadow:0 10px 30px rgba(20,30,60,.1)}
+.hero{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:0;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.hero .lbl{color:#dfe5ff;font-size:13px}
+.hero .big{font-size:36px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.nav{display:flex;align-items:center;gap:10px}
+.nav h1{font-size:18px;margin:0;min-width:160px;text-align:center}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+h2{font-size:16px;margin:0 0 8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat{background:var(--soft);border-radius:14px;padding:14px}
+.stat b{display:block;font-size:20px;margin-top:4px;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;color:#fff;margin-top:6px}
+.b-ok{background:var(--success)}.b-warn{background:var(--warning)}.b-danger{background:var(--danger)}.b-info{background:var(--info)}
+.progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--success));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{text-align:center;font-size:12px;color:var(--muted);padding:4px;font-weight:600}
+.day{position:relative;border:1px solid transparent;background:var(--soft);border-radius:12px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font:inherit;color:var(--ink);padding:0;transition:transform .15s,background .2s}
+.day:hover{transform:translateY(-2px);background:var(--line)}
+.day.we .dn{color:var(--muted)}
+.day.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,110,247,.2)}
+.day i{width:7px;height:7px;border-radius:50%;margin-top:4px}
+.day small{font-size:10px;color:var(--muted);margin-top:2px}
+.day.today .dn{font-weight:800;text-decoration:underline}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.legend span{font-size:12px;background:var(--soft);border-radius:999px;padding:4px 10px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+select,input{font:inherit;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
+input:focus,select:focus{outline:2px solid var(--primary);outline-offset:1px}
+button{font:inherit;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-weight:600;transition:transform .12s,filter .2s}
+button:hover{filter:brightness(1.05)}
+button:active{transform:scale(.97)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.day{min-height:44px}
+button.pri{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:0}
+button.ghost{background:transparent}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:var(--soft)}
+.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pos{color:var(--success);font-weight:600}.neg{color:var(--danger);font-weight:600}
+details summary{cursor:pointer;font-weight:600}
+.set{display:grid;gap:10px;margin-top:12px}
+.set label{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px}
+.set input{width:140px;text-align:right}
+.toast{position:fixed;right:16px;bottom:16px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none;font-size:14px;max-width:80vw}
+.toast.show{opacity:1;transform:none}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.day.pop{animation:pop .3s ease}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#4f6ef7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Salary">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card hero">
+    <div>
+      <div class="lbl">Salary Calendar v2.1 · Estimated take-home · <span id="monthLbl"></span></div>
+      <div class="big" id="net">NT$ 0</div>
+      <span class="badge b-info" id="netNote">Approximate</span>
+    </div>
+    <div class="nav">
+      <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="shift(-1)">&larr;</button>
+      <h1 id="title"></h1>
+      <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="shift(1)">&rarr;</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cal" id="grid"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="card" id="editor"></div>
+
+  <div class="card">
+    <h2>This pay period (26th to 25th)</h2>
+    <div class="stats" id="sum"></div>
+    <div class="row"><label class="muted">Performance bonus this pay period (NT$) <input id="bonus" type="number" min="0" style="width:120px" onchange="setBonus(this.value)"></label></div>
+    <div style="margin-top:12px"><div class="muted" id="leaveTxt"></div><div class="progress"><div id="leaveBar"></div></div></div>
+  </div>
+
+  <div class="card" id="brk"></div>
+
+  <div class="card">
+    <h2>Export to Excel</h2>
+    <p class="muted">One sheet per month with every day, hours, rates and amounts, plus a Summary sheet.</p>
+    <div class="row"><button class="pri" onclick="exportXlsx()">Download Excel (.xlsx)</button><span id="exp" class="muted"></span></div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>Settings</summary>
+      <div class="set">
+        <label>Monthly salary incl. meal allowance (NT$) <input id="s_salary" type="number" onchange="setS('salary',this.value)"></label>
+        <label>Insurance deduction per month (NT$) <input id="s_ins" type="number" onchange="setS('insurance',this.value)"></label>
+        <label>Annual leave per year (days) <input id="s_quota" type="number" min="0" onchange="setS('quota',this.value)"></label>
+        <p class="muted">Your data stays in this browser only.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='salaryCalV1';
+const WK=[[2,1.34],[4,1.67],[Infinity,2.67]];
+const RT=[[2,1.34],[8,1.67],[Infinity,2.67]];
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const TYPES={
+  work:['Normal work','#94a3b8',0],
+  ot:['Weekday overtime','#f59e0b',1],
+  restwork:['Saturday / rest-day work','#8b5cf6',1],
+  holwork:['Work on national holiday','#06b6d4',1],
+  annual:['Annual leave (特休)','#10b981',0],
+  sick:['Sick leave (病假)','#ef4444',0],
+  personal:['Personal leave (事假)','#64748b',0],
+  holiday:['National holiday (paid)','#0ea5e9',0],
+  off:['Day off','#cbd5e1',0]
+};
+let S={salary:0,insurance:0,quota:10,days:{},bonus:{}};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const _n=new Date();let Y=_n.getFullYear(),M=_n.getMonth()+1,sel=null;if(_n.getDate()>=26){M++;if(M>12){M=1;Y++}}
+const $=i=>document.getElementById(i);
+const pad=n=>String(n).padStart(2,'0');
+const K=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const r2=n=>Math.round(n*100)/100;
+const dimOf=(y,m)=>new Date(y,m,0).getDate();
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),1800)}
+
+function tierPay(h,rate,tiers){
+  let rem=h,prev=0,amt=0,parts=[];
+  for(const [cap,mult] of tiers){
+    if(rem<=0)break;
+    const take=Math.min(rem,cap-prev), v=take*mult*rate;
+    amt+=v; parts.push(`${+take.toFixed(2)}h×${mult}=${fmt(v)}`);
+    rem-=take; prev=cap;
+  }
+  return{amt,parts};
+}
+
+function dayCalc(e,dim){
+  const rate=S.salary/dim/8, wage=S.salary/dim, w30=S.salary/30;
+  if(e.t==='ot'){const r=tierPay(e.h,rate,WK);return{amt:r.amt,text:`Weekday overtime ${e.h}h: ${r.parts.join(' + ')}`}}
+  if(e.t==='restwork'){const r=tierPay(e.h,rate,RT);return{amt:r.amt,text:`Rest-day work ${e.h}h: ${r.parts.join(' + ')}`}}
+  if(e.t==='holwork'){
+    const extra=Math.max(0,e.h-8), r=tierPay(extra,rate,WK);
+    return{amt:wage+r.amt,text:`Holiday work ${e.h}h: 1 day wage ${fmt(wage)}${extra?' + '+r.parts.join(' + '):''}`};
+  }
+  if(e.t==='sick')return{ded:w30/2,text:"Sick leave: half a day's wage deducted"};
+  if(e.t==='personal')return{ded:w30,text:"Personal leave: a full day's wage deducted"};
+  return{};
+}
+
+function periodDays(y,m){
+  const out=[],s=new Date(y,m-2,26),e=new Date(y,m-1,25);
+  for(let d=new Date(s);d<=e;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1))out.push(new Date(d));
+  return out;
+}
+function monthCalc(y,m){
+  const dim=dimOf(y,m);
+  let ot=0,hol=0,ded=0,lines=[],counts={annual:0,sick:0,personal:0};
+  for(const dt of periodDays(y,m)){
+    const k=K(dt.getFullYear(),dt.getMonth()+1,dt.getDate()), e=S.days[k]; if(!e)continue;
+    const dd=dimOf(dt.getFullYear(),dt.getMonth()+1);
+    const c=dayCalc(e,dd), wd=WD[dt.getDay()], mo=dt.getMonth()+1, dy=dt.getDate();
+    if(e.t==='ot'||e.t==='restwork')ot+=c.amt;
+    if(e.t==='holwork')hol+=c.amt;
+    if(c.ded)ded+=c.ded;
+    if(e.t in counts)counts[e.t]++;
+    if(c.text)lines.push({label:`${mo}/${dy} (${wd})`,text:c.text,amt:c.amt||0,ded:c.ded||0});
+  }
+  let annual=0;
+  for(const k in S.days)if(k.startsWith(y+'-')&&S.days[k].t==='annual')annual++;
+  return{dim,rate:S.salary/dim/8,ot,hol,ded,lines,counts,annual,bonus:S.bonus[`${y}-${m}`]||0};
+}
+
+function countTo(el,to,prefix=''){
+  const from=parseFloat(el.dataset.v||0),start=performance.now(),dur=600;
+  function step(now){const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+    el.textContent=prefix+fmt(from+(to-from)*e);if(p<1)requestAnimationFrame(step);else el.dataset.v=to}
+  requestAnimationFrame(step);
+}
+
+function shift(n){M+=n;if(M<1){M=12;Y--}if(M>12){M=1;Y++}sel=null;render()}
+function pick(k){sel=k;render()}
+
+function render(){
+  const days=periodDays(Y,M), first=days[0].getDay();
+  const now=new Date();
+  const fmtD=d=>d.toLocaleString('en-US',{month:'short',day:'numeric'});
+  const label=`${fmtD(days[0])} – ${fmtD(days[days.length-1])}, ${days[days.length-1].getFullYear()}`;
+  $('title').textContent=label; $('monthLbl').textContent=label;
+
+  let h='';
+  WD.forEach(w=>h+=`<div class="wd">${w}</div>`);
+  for(let i=0;i<first;i++)h+='<div></div>';
+  for(const dt of days){
+    const k=K(dt.getFullYear(),dt.getMonth()+1,dt.getDate()), e=S.days[k], wd=dt.getDay(), d=dt.getDate();
+    const t=e?TYPES[e.t]:null;
+    const cls=['day',sel===k?'sel':'',(wd===0||wd===6)?'we':'',(now.toDateString()===dt.toDateString())?'today':''].join(' ');
+    h+=`<button class="${cls}" onclick="pick('${k}')"><span class="dn">${d}</span>${t?`<i style="background:${t[1]}"></i>`:''}${e&&TYPES[e.t][2]?`<small>${e.h}h</small>`:''}</button>`;
+  }
+  $('grid').innerHTML=h;
+  $('legend').innerHTML=Object.values(TYPES).map(v=>`<span><i style="background:${v[1]}"></i>${v[0]}</span>`).join('');
+  renderEditor(); renderSummary();
+  $('s_salary').value=S.salary; $('s_ins').value=S.insurance; $('s_quota').value=S.quota;
+}
+
+function renderEditor(){
+  const box=$('editor');
+  if(!sel){box.innerHTML='<h2>Select a day</h2><p class="muted">Tap a day to mark it as overtime, weekend work, leave or a holiday.</p>';return}
+  const e=S.days[sel]||{t:'work',h:0};
+  const opts=Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===e.t?' selected':''}>${v[0]}</option>`).join('');
+  box.innerHTML=`<h2>${sel}</h2>
+    <div class="row"><select id="ty" onchange="renderHours()">${opts}</select><span id="hw"></span></div>
+    <div class="row"><button class="pri" onclick="apply()">Save day</button><button onclick="clearDay()">Clear</button></div>`;
+  renderHours();
+}
+function renderHours(){
+  const t=$('ty').value, e=S.days[sel]||{h:1};
+  $('hw').innerHTML=TYPES[t][2]?`<label>Hours <input id="hh" type="number" step="0.5" min="0" max="16" value="${e.h||1}" style="width:90px"></label>`:'';
+}
+function apply(){
+  const t=$('ty').value;
+  if(t==='work')delete S.days[sel];
+  else S.days[sel]={t,h:TYPES[t][2]?(parseFloat($('hh').value)||0):0};
+  save(); render(); toast(`Saved ${sel}`);
+  const chip=document.querySelector('.day.sel'); if(chip)chip.classList.add('pop');
+}
+function clearDay(){delete S.days[sel];save();render();toast('Day cleared')}
+
+function renderSummary(){
+  const c=monthCalc(Y,M), ym=`${Y}-${M}`;
+  $('bonus').value=S.bonus[ym]||'';
+  const net=S.salary+c.ot+c.hol+c.bonus-c.ded-S.insurance;
+  countTo($('net'),net,'NT$ '); $('net').dataset.v=net;
+  $('netNote').textContent=c.ot+c.hol>0?'Includes extra pay':'Base pay only';
+  $('sum').innerHTML=`
+    <div class="stat"><span class="muted">Base (incl. meal)</span><b>NT$ ${fmt(S.salary)}</b></div>
+    <div class="stat"><span class="muted">Overtime + holiday</span><b class="pos">+${fmt(c.ot+c.hol)}</b></div>
+    <div class="stat"><span class="muted">Leave deduction</span><b class="neg">−${fmt(c.ded)}</b></div>
+    <div class="stat"><span class="muted">Insurance</span><b class="neg">−${fmt(S.insurance)}</b></div>`;
+  const left=Math.max(0,S.quota-c.annual);
+  $('leaveTxt').textContent=`Annual leave: ${c.annual} of ${S.quota} used, ${left} left. Sick: ${c.counts.sick} day(s). Personal: ${c.counts.personal} day(s).`;
+  $('leaveBar').style.width=(S.quota?Math.min(100,c.annual/S.quota*100):0)+'%';
+  renderBreakdown(c);
+}
+
+function renderBreakdown(c){
+  const rows=c.lines.map(l=>`<tr><td>${l.label}</td><td>${l.text}</td><td class="r ${l.amt?'pos':'neg'}">${l.amt?'+'+fmt(l.amt):(l.ded?'−'+fmt(l.ded):'')}</td></tr>`).join('')
+    || '<tr><td colspan="3" class="muted">No overtime or leave this month.</td></tr>';
+  $('brk').innerHTML=`<h2>How this month is calculated</h2>
+    <p class="muted">Hourly rate = monthly salary ÷ days in the month the work was done ÷ 8. In a 30-day month that is <b>NT$ ${(S.salary/30/8).toFixed(2)}</b>; in a 31-day month, <b>NT$ ${(S.salary/31/8).toFixed(2)}</b>. Each day uses the length of the calendar month it falls in.</p>
+    <table><thead><tr><th>Date</th><th>Calculation</th><th class="r">Amount</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="muted" style="margin-top:14px"><b>Rules used</b><br>
+    Weekday overtime: first 2h ×1.34, next 2h ×1.67, beyond 4h ×2.67.<br>
+    Rest-day (e.g. Saturday): first 2h ×1.34, hours 3 to 8 ×1.67, beyond 8h ×2.67.<br>
+    Holiday work: one extra day's wage, plus overtime rules on hours beyond 8.<br>
+    Annual leave and national holidays are paid, so they add no pay.<br>
+    Personal leave deducts a full day (salary ÷ 30); sick leave deducts half a day (assumption, check against your slip).</p>
+    <p class="muted">Each pay period runs from the 26th of the previous month to the 25th, matching your company's cycle. Income tax is not included. Treat totals as estimates.</p>`;
+}
+
+function setBonus(v){S.bonus[`${Y}-${M}`]=parseFloat(v)||0;save();render();toast('Bonus updated')}
+function setS(k,v){const n=parseFloat(v);if(!isNaN(n)){S[k]=n;save();render();toast('Settings saved')}}
+
+async function exportXlsx(){
+  const msg=$('exp');
+  if(typeof XLSX==='undefined'){msg.textContent='Excel library did not load. Check your connection.';return}
+  const wb=XLSX.utils.book_new();
+  const months=new Set();
+  for(const k in S.days){const [yy,mm,dd]=k.split('-').map(Number);let pm=mm,py=yy;if(dd>=26){pm++;if(pm>12){pm=1;py++}}months.add(`${py}-${pad(pm)}`)}
+  for(const k in S.bonus){const [y,m]=k.split('-');months.add(`${y}-${pad(+m)}`)}
+  const sorted=[...months].sort();
+  const summary=[['Pay period (26th to 25th)','Base (incl. meal)','Overtime','Holiday work','Performance bonus','Leave deduction','Insurance','Estimated take-home','Annual leave used','Sick days','Personal days']];
+  for(const ym of sorted){
+    const [y,m]=ym.split('-').map(Number), dim=dimOf(y,m), c=monthCalc(y,m);
+    const net=S.salary+c.ot+c.hol+c.bonus-c.ded-S.insurance;
+    summary.push([ym,S.salary,r2(c.ot),r2(c.hol),c.bonus,r2(c.ded),S.insurance,r2(net),c.annual,c.counts.sick,c.counts.personal]);
+    const rows=[['Date','Weekday','Type','Hours','Hourly rate','Amount added','Amount deducted','Calculation']];
+    for(const dt of periodDays(y,m)){
+      const k=K(dt.getFullYear(),dt.getMonth()+1,dt.getDate()), e=S.days[k]; if(!e)continue;
+      const dd=dimOf(dt.getFullYear(),dt.getMonth()+1), x=dayCalc(e,dd);
+      rows.push([k,WD[dt.getDay()],TYPES[e.t][0],TYPES[e.t][2]?e.h:'',r2(S.salary/dd/8),r2(x.amt||0),r2(x.ded||0),x.text||'']);
+    }
+    rows.push([],['Month totals'],
+      ['Hourly rate, 30-day month (salary ÷ 30 ÷ 8)',r2(S.salary/30/8)],['Hourly rate, 31-day month (salary ÷ 31 ÷ 8)',r2(S.salary/31/8)],
+      ['Base (incl. meal)',S.salary],['Overtime',r2(c.ot)],['Holiday work',r2(c.hol)],
+      ['Performance bonus',c.bonus],['Leave deduction',r2(c.ded)],['Insurance',S.insurance],
+      ['Estimated take-home',r2(net)]);
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:12},{wch:10},{wch:26},{wch:8},{wch:13},{wch:14},{wch:16},{wch:60}];
+    XLSX.utils.book_append_sheet(wb,ws,'Pay '+ym);
+  }
+  const sws=XLSX.utils.aoa_to_sheet(summary);
+  sws['!cols']=Array(11).fill({wch:18});
+  XLSX.utils.book_append_sheet(wb,sws,'Summary');
+  wb.SheetNames=['Summary',...wb.SheetNames.filter(n=>n!=='Summary')];
+  const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  try{
+    const dl=await claude.use('downloads');
+    if(!dl){msg.textContent='Download is not available in this view.';return}
+    await dl.save({filename:`salary-calendar-${new Date().toISOString().slice(0,10)}.xlsx`,data:buf});
+    msg.textContent='Saved.';
+  }catch(err){
+    msg.textContent=err&&err.code==='declined'?'Download cancelled.':'Download is not available here.';
+  }
+}
+
+render();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
