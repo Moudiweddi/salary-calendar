@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salary Calendar · Welcome back</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1020">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="stylesheet" href="auth.css">
+</head>
+<body data-page="login">
+<div class="auth">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="glass acard" id="acard">
+    <div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+    <h2 id="at">Welcome back</h2>
+    <p class="muted sub" id="as">Log in to open your salary calendar.</p>
+    <form id="aform" novalidate>
+      <div class="f"><input id="u" type="text" placeholder=" " autocomplete="username" autocapitalize="none"><label for="u">Username</label></div>
+      <div class="f"><input id="p" type="password" placeholder=" " autocomplete="current-password"><label for="p">Password</label><button type="button" class="eye" onclick="eye('p',this)">Show</button></div>
+      <div class="msg" id="msg" role="alert"></div>
+      <button class="pri big" id="go">Log in</button>
+      <div class="links"><a href="recover.html">Forgot password?</a></div>
+    </form>
+    <div class="ver">Salary Calendar v3.2</div>
+  </div>
+</div>
+<script src="auth.js"></script>
+</body>
+</html>
