@@ -3,129 +3,196 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Salary Calendar v2.1</title>
-<style>
-:root{--primary:#4f6ef7;--primary-2:#7c5cf7;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--info:#0ea5e9;--bg:#f3f5fb;--card:#fff;--ink:#1b2231;--muted:#6b7385;--line:#e6e9f2;--soft:#f7f8fc;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1220;--card:#171f2f;--ink:#e8ecf5;--muted:#98a2b6;--line:#26304a;--soft:#1e2739;color-scheme:dark}}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
-.wrap{max-width:900px;margin:auto;padding:16px;display:grid;gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(20,30,60,.06);animation:rise .45s ease both;transition:box-shadow .2s}
-.card:hover{box-shadow:0 10px 30px rgba(20,30,60,.1)}
-.hero{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:0;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
-.hero .lbl{color:#dfe5ff;font-size:13px}
-.hero .big{font-size:36px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
-.nav{display:flex;align-items:center;gap:10px}
-.nav h1{font-size:18px;margin:0;min-width:160px;text-align:center}
-.muted{color:var(--muted);font-size:13px;line-height:1.5}
-h2{font-size:16px;margin:0 0 8px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.stat{background:var(--soft);border-radius:14px;padding:14px}
-.stat b{display:block;font-size:20px;margin-top:4px;font-variant-numeric:tabular-nums}
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;color:#fff;margin-top:6px}
-.b-ok{background:var(--success)}.b-warn{background:var(--warning)}.b-danger{background:var(--danger)}.b-info{background:var(--info)}
-.progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:8px}
-.progress>div{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--success));transition:width .9s cubic-bezier(.2,.8,.2,1)}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.wd{text-align:center;font-size:12px;color:var(--muted);padding:4px;font-weight:600}
-.day{position:relative;border:1px solid transparent;background:var(--soft);border-radius:12px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font:inherit;color:var(--ink);padding:0;transition:transform .15s,background .2s}
-.day:hover{transform:translateY(-2px);background:var(--line)}
-.day.we .dn{color:var(--muted)}
-.day.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,110,247,.2)}
-.day i{width:7px;height:7px;border-radius:50%;margin-top:4px}
-.day small{font-size:10px;color:var(--muted);margin-top:2px}
-.day.today .dn{font-weight:800;text-decoration:underline}
-.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.legend span{font-size:12px;background:var(--soft);border-radius:999px;padding:4px 10px;color:var(--muted)}
-.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
-select,input{font:inherit;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
-input:focus,select:focus{outline:2px solid var(--primary);outline-offset:1px}
-button{font:inherit;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-weight:600;transition:transform .12s,filter .2s}
-button:hover{filter:brightness(1.05)}
-button:active{transform:scale(.97)}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
-.day{min-height:44px}
-button.pri{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:0}
-button.ghost{background:transparent}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
-th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line)}
-td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
-tr:nth-child(even) td{background:var(--soft)}
-.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.pos{color:var(--success);font-weight:600}.neg{color:var(--danger);font-weight:600}
-details summary{cursor:pointer;font-weight:600}
-.set{display:grid;gap:10px;margin-top:12px}
-.set label{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px}
-.set input{width:140px;text-align:right}
-.toast{position:fixed;right:16px;bottom:16px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none;font-size:14px;max-width:80vw}
-.toast.show{opacity:1;transform:none}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
-.day.pop{animation:pop .3s ease}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+<title>Salary Calendar v3.0</title>
+<link rel="icon" href="icon-192.png" type="image/png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#4f6ef7">
+<meta name="theme-color" content="#0b1020">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Salary">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" href="icon-192.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#eef1fa;--glass:rgba(255,255,255,.72);--card:rgba(255,255,255,.8);--ink:#161c2d;--muted:#667089;--line:rgba(30,40,80,.1);--soft:rgba(60,80,160,.07);--primary:#5b6cff;--primary2:#9b5cff;--ok:#10b981;--warn:#f59e0b;--bad:#ef4444;--info:#0ea5e9;--shadow:0 10px 30px rgba(30,40,90,.1);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0e1c;--glass:rgba(255,255,255,.07);--card:rgba(255,255,255,.06);--ink:#eaeefb;--muted:#97a1bd;--line:rgba(255,255,255,.1);--soft:rgba(255,255,255,.06);--shadow:0 10px 30px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0e1c;--glass:rgba(255,255,255,.07);--card:rgba(255,255,255,.06);--ink:#eaeefb;--muted:#97a1bd;--line:rgba(255,255,255,.1);--soft:rgba(255,255,255,.06);--shadow:0 10px 30px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60vmax 60vmax at 10% -10%,rgba(91,108,255,.35),transparent 60%),radial-gradient(50vmax 50vmax at 100% 20%,rgba(155,92,255,.28),transparent 60%),radial-gradient(40vmax 40vmax at 40% 110%,rgba(16,185,129,.2),transparent 60%)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:10px 14px;font-weight:600;transition:transform .12s,background .2s}
+button:active{transform:scale(.96)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+input,select{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;max-width:100%}
+button.pri{background:linear-gradient(135deg,var(--primary),var(--primary2));border:0;color:#fff}
+.glass{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+h2{font-size:16px;margin:0 0 10px}
+.num{font-variant-numeric:tabular-nums}
+
+/* layout */
+.app{display:grid;grid-template-columns:1fr;min-height:100vh}
+.side{display:none}
+main{padding:14px 14px calc(92px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;align-content:start;max-width:1100px;width:100%;margin:auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.top h1{font-size:15px;margin:0;text-align:center;flex:1}
+.top button{padding:8px 12px}
+.view{display:none;gap:14px}
+.view.on{display:grid;animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* bottom tabs (phone) */
+.tabs{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-around;background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:6px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:var(--shadow);z-index:20}
+.tabs button,.side button.nv{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:8px 10px;border-radius:16px;color:var(--muted);flex:1}
+.tabs button svg,.side button.nv svg{width:22px;height:22px}
+.tabs button.on,.side button.nv.on{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+
+/* hero */
+.hero{background:linear-gradient(135deg,rgba(91,108,255,.9),rgba(155,92,255,.9));color:#fff;border:0;display:grid;gap:14px;overflow:hidden;position:relative}
+.hero .lbl{font-size:13px;opacity:.85}
+.hero .big{font-size:clamp(34px,10vw,52px);font-weight:800;letter-spacing:-.02em;margin:2px 0}
+.chip{display:inline-block;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(255,255,255,.2)}
+.ring{width:110px;height:110px;flex:none}
+.hero-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{padding:14px}
+.kpi b{display:block;font-size:19px;margin-top:4px}
+.kpi i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+
+/* charts */
+.bars{display:flex;align-items:flex-end;gap:8px;height:150px;margin-top:8px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;font-size:11px;color:var(--muted)}
+.bar div{width:100%;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,var(--primary),var(--primary2));min-height:4px;transition:height .8s cubic-bezier(.2,.8,.2,1)}
+.bar.cur div{background:linear-gradient(180deg,#34d399,var(--info))}
+.bar b{color:var(--ink);font-size:11px}
+.prog{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:8px}
+.prog div{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--ok));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+/* calendar */
+.cal-layout{display:grid;gap:14px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.wd{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;font-weight:700}
+.day{aspect-ratio:1/1;min-height:42px;border-radius:14px;background:var(--soft);border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:3px;font-weight:600;font-size:14px}
+.day.we{color:var(--muted)}
+.day.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,108,255,.3)}
+.day.today{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.day i{width:6px;height:6px;border-radius:50%}
+.day small{font-size:9px;font-weight:600;opacity:.8;line-height:1}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.legend span{font-size:11px;background:var(--soft);border-radius:99px;padding:4px 9px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.editor .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.editor select{flex:1;min-width:0}
+.scrim{display:none}
+
+/* breakdown */
+.list{display:grid;gap:8px}
+.li{display:flex;justify-content:space-between;gap:12px;background:var(--soft);border-radius:14px;padding:12px}
+.li b{font-size:13px}.li span{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.li .amt{font-weight:700;white-space:nowrap}
+.set{display:grid;gap:12px}
+.set label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.set input{width:130px;text-align:right}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;opacity:0;transition:all .3s;pointer-events:none;font-size:14px;z-index:40;max-width:88vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* phone: editor as bottom sheet */
+@media (max-width:899px){
+  .editor{position:fixed;left:0;right:0;bottom:0;z-index:30;border-radius:24px 24px 0 0;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--bg);background-image:linear-gradient(var(--card),var(--card))}
+  .editor.open{transform:none}
+  .scrim.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25}
+  .editor .grab{width:40px;height:4px;border-radius:9px;background:var(--line);margin:-6px auto 12px}
+}
+@media (min-width:480px){.kpis{grid-template-columns:repeat(4,1fr)}}
+
+/* desktop: glass sidebar */
+@media (min-width:900px){
+  .app{grid-template-columns:auto 1fr}
+  .tabs{display:none}
+  main{padding:22px 28px 40px}
+  .toast{bottom:24px}
+  .side{display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;width:230px;margin:14px;height:calc(100vh - 28px);padding:14px;border-radius:26px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(24px);box-shadow:var(--shadow);transition:width .3s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+  .side.mini{width:72px}
+  .side .brand{display:flex;align-items:center;gap:10px;font-weight:800;padding:6px 8px 14px;white-space:nowrap}
+  .side .brand em{font-style:normal;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;flex:none}
+  .side button.nv{flex-direction:row;gap:12px;font-size:14px;padding:11px 12px;justify-content:flex-start;flex:none;white-space:nowrap}
+  .side.mini .lb{display:none}
+  .side .sp{flex:1}
+  .cal-layout{grid-template-columns:1.5fr 1fr;align-items:start}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .ov{grid-template-columns:1fr 1fr}
+  .ov .wide{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><em>💰</em><span class="lb">Salary</span></div>
+    <div id="sideNav" style="display:grid;gap:6px"></div>
+    <div class="sp"></div>
+    <button class="nv" onclick="theme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lb">Theme</span></button>
+    <button class="nv" onclick="document.getElementById('side').classList.toggle('mini')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg><span class="lb">Collapse</span></button>
+  </aside>
 
-  <div class="card hero">
-    <div>
-      <div class="lbl">Salary Calendar v2.1 · Estimated take-home · <span id="monthLbl"></span></div>
-      <div class="big" id="net">NT$ 0</div>
-      <span class="badge b-info" id="netNote">Approximate</span>
-    </div>
-    <div class="nav">
-      <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="shift(-1)">&larr;</button>
+  <main>
+    <div class="top">
+      <button onclick="shift(-1)" aria-label="Previous period">&larr;</button>
       <h1 id="title"></h1>
-      <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="shift(1)">&rarr;</button>
+      <button onclick="shift(1)" aria-label="Next period">&rarr;</button>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="cal" id="grid"></div>
-    <div class="legend" id="legend"></div>
-  </div>
-
-  <div class="card" id="editor"></div>
-
-  <div class="card">
-    <h2>This pay period (26th to 25th)</h2>
-    <div class="stats" id="sum"></div>
-    <div class="row"><label class="muted">Performance bonus this pay period (NT$) <input id="bonus" type="number" min="0" style="width:120px" onchange="setBonus(this.value)"></label></div>
-    <div style="margin-top:12px"><div class="muted" id="leaveTxt"></div><div class="progress"><div id="leaveBar"></div></div></div>
-  </div>
-
-  <div class="card" id="brk"></div>
-
-  <div class="card">
-    <h2>Export to Excel</h2>
-    <p class="muted">One sheet per month with every day, hours, rates and amounts, plus a Summary sheet.</p>
-    <div class="row"><button class="pri" onclick="exportXlsx()">Download Excel (.xlsx)</button><span id="exp" class="muted"></span></div>
-  </div>
-
-  <div class="card">
-    <details>
-      <summary>Settings</summary>
-      <div class="set">
-        <label>Monthly salary incl. meal allowance (NT$) <input id="s_salary" type="number" onchange="setS('salary',this.value)"></label>
-        <label>Insurance deduction per month (NT$) <input id="s_ins" type="number" onchange="setS('insurance',this.value)"></label>
-        <label>Annual leave per year (days) <input id="s_quota" type="number" min="0" onchange="setS('quota',this.value)"></label>
-        <p class="muted">Your data stays in this browser only.</p>
+    <section class="view on" id="v-ov">
+      <div class="glass hero">
+        <div class="hero-row">
+          <div>
+            <div class="lbl">Estimated take-home</div>
+            <div class="big num" id="net">NT$ 0</div>
+            <span class="chip" id="netNote">Approximate</span>
+          </div>
+          <svg class="ring" viewBox="0 0 120 120" id="donut" aria-label="Pay mix"></svg>
+        </div>
       </div>
-    </details>
-  </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="ov" style="display:grid;gap:14px">
+        <div class="glass"><h2>Last 6 pay periods</h2><div class="bars" id="bars"></div></div>
+        <div class="glass"><h2>Annual leave</h2><div class="muted" id="leaveTxt"></div><div class="prog"><div id="leaveBar"></div></div>
+          <h2 style="margin-top:18px">Performance bonus this period</h2>
+          <input id="bonus" type="number" min="0" inputmode="numeric" placeholder="NT$ 0" onchange="setBonus(this.value)" style="width:100%">
+        </div>
+      </div>
+    </section>
 
+    <section class="view" id="v-cal">
+      <div class="cal-layout">
+        <div class="glass"><div class="cal" id="grid"></div><div class="legend" id="legend"></div></div>
+        <div class="scrim" id="scrim" onclick="closeEd()"></div>
+        <div class="glass editor" id="editor"></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-brk">
+      <div class="glass"><h2>How this period is calculated</h2><div class="list" id="brkList"></div><div id="brkNote"></div></div>
+    </section>
+
+    <section class="view" id="v-set">
+      <div class="glass set">
+        <h2>Settings</h2>
+        <label>Monthly salary incl. meal (NT$) <input id="s_salary" type="number" inputmode="numeric" onchange="setS('salary',this.value)"></label>
+        <label>Insurance per month (NT$) <input id="s_ins" type="number" inputmode="numeric" onchange="setS('insurance',this.value)"></label>
+        <label>Annual leave per year (days) <input id="s_quota" type="number" inputmode="numeric" onchange="setS('quota',this.value)"></label>
+        <p class="muted">Insurance is LI 1,145 + NHI 710 + pension 1,374 from your slip. Your data stays in this browser only.</p>
+      </div>
+      <div class="glass"><h2>Export to Excel</h2><p class="muted">One sheet per month plus a Summary sheet.</p>
+        <button class="pri" onclick="exportXlsx()">Download Excel (.xlsx)</button> <span id="exp" class="muted"></span></div>
+    </section>
+  </main>
 </div>
+<nav class="tabs" id="tabs"></nav>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -144,18 +211,18 @@ const TYPES={
   holiday:['National holiday (paid)','#0ea5e9',0],
   off:['Day off','#cbd5e1',0]
 };
-let S={salary:0,insurance:0,quota:10,days:{},bonus:{}};
+let S={salary:45000,insurance:3229,quota:10,days:{},bonus:{}};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
-const _n=new Date();let Y=_n.getFullYear(),M=_n.getMonth()+1,sel=null;if(_n.getDate()>=26){M++;if(M>12){M=1;Y++}}
+const _n=new Date();let Y=_n.getFullYear(),M=_n.getMonth()+1,sel=null,view='ov';
+if(_n.getDate()>=26){M++;if(M>12){M=1;Y++}}
 const $=i=>document.getElementById(i);
 const pad=n=>String(n).padStart(2,'0');
 const K=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
 const fmt=n=>Math.round(n).toLocaleString('en-US');
 const r2=n=>Math.round(n*100)/100;
 const dimOf=(y,m)=>new Date(y,m,0).getDate();
-
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),1800)}
 
 function tierPay(h,rate,tiers){
@@ -168,7 +235,6 @@ function tierPay(h,rate,tiers){
   }
   return{amt,parts};
 }
-
 function dayCalc(e,dim){
   const rate=S.salary/dim/8, wage=S.salary/dim, w30=S.salary/30;
   if(e.t==='ot'){const r=tierPay(e.h,rate,WK);return{amt:r.amt,text:`Weekday overtime ${e.h}h: ${r.parts.join(' + ')}`}}
@@ -177,11 +243,10 @@ function dayCalc(e,dim){
     const extra=Math.max(0,e.h-8), r=tierPay(extra,rate,WK);
     return{amt:wage+r.amt,text:`Holiday work ${e.h}h: 1 day wage ${fmt(wage)}${extra?' + '+r.parts.join(' + '):''}`};
   }
-  if(e.t==='sick')return{ded:w30/2,text:"Sick leave: half a day's wage deducted"};
-  if(e.t==='personal')return{ded:w30,text:"Personal leave: a full day's wage deducted"};
+  if(e.t==='sick')return{ded:w30/2,text:"Sick leave: half a day’s wage deducted"};
+  if(e.t==='personal')return{ded:w30,text:"Personal leave: a full day’s wage deducted"};
   return{};
 }
-
 function periodDays(y,m){
   const out=[],s=new Date(y,m-2,26),e=new Date(y,m-1,25);
   for(let d=new Date(s);d<=e;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1))out.push(new Date(d));
@@ -204,32 +269,43 @@ function monthCalc(y,m){
   for(const k in S.days)if(k.startsWith(y+'-')&&S.days[k].t==='annual')annual++;
   return{dim,rate:S.salary/dim/8,ot,hol,ded,lines,counts,annual,bonus:S.bonus[`${y}-${m}`]||0};
 }
+const netOf=c=>S.salary+c.ot+c.hol+c.bonus-c.ded-S.insurance;
 
 function countTo(el,to,prefix=''){
-  const from=parseFloat(el.dataset.v||0),start=performance.now(),dur=600;
+  const from=parseFloat(el.dataset.v||0),start=performance.now(),dur=700;
   function step(now){const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
     el.textContent=prefix+fmt(from+(to-from)*e);if(p<1)requestAnimationFrame(step);else el.dataset.v=to}
   requestAnimationFrame(step);
 }
 
-function shift(n){M+=n;if(M<1){M=12;Y--}if(M>12){M=1;Y++}sel=null;render()}
-function pick(k){sel=k;render()}
+/* navigation */
+const ICON={
+  ov:'<path d="M3 12l9-9 9 9M5 10v10h14V10"/>',
+  cal:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/>',
+  brk:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+  set:'<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.6 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.6-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/>'
+};
+const NAV=[['ov','Overview'],['cal','Calendar'],['brk','Breakdown'],['set','Settings']];
+function navHTML(){return NAV.map(([k,l])=>`<button class="nv ${view===k?'on':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg><span class="lb">${l}</span></button>`).join('')}
+function go(v){view=v;closeEd();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$('tabs').innerHTML=navHTML();$('sideNav').innerHTML=navHTML();window.scrollTo({top:0,behavior:'smooth'})}
+function theme(){const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dark?'light':'dark'}
+
+function shift(n){M+=n;if(M<1){M=12;Y--}if(M>12){M=1;Y++}sel=null;closeEd();render()}
+function pick(k){sel=k;render();$('editor').classList.add('open');$('scrim').classList.add('open')}
+function closeEd(){$('editor').classList.remove('open');$('scrim').classList.remove('open')}
 
 function render(){
-  const days=periodDays(Y,M), first=days[0].getDay();
-  const now=new Date();
+  const days=periodDays(Y,M), first=days[0].getDay(), now=new Date();
   const fmtD=d=>d.toLocaleString('en-US',{month:'short',day:'numeric'});
-  const label=`${fmtD(days[0])} – ${fmtD(days[days.length-1])}, ${days[days.length-1].getFullYear()}`;
-  $('title').textContent=label; $('monthLbl').textContent=label;
-
+  $('title').textContent=`${fmtD(days[0])} – ${fmtD(days[days.length-1])}, ${days[days.length-1].getFullYear()}`;
   let h='';
   WD.forEach(w=>h+=`<div class="wd">${w}</div>`);
   for(let i=0;i<first;i++)h+='<div></div>';
   for(const dt of days){
-    const k=K(dt.getFullYear(),dt.getMonth()+1,dt.getDate()), e=S.days[k], wd=dt.getDay(), d=dt.getDate();
+    const k=K(dt.getFullYear(),dt.getMonth()+1,dt.getDate()), e=S.days[k], wd=dt.getDay();
     const t=e?TYPES[e.t]:null;
-    const cls=['day',sel===k?'sel':'',(wd===0||wd===6)?'we':'',(now.toDateString()===dt.toDateString())?'today':''].join(' ');
-    h+=`<button class="${cls}" onclick="pick('${k}')"><span class="dn">${d}</span>${t?`<i style="background:${t[1]}"></i>`:''}${e&&TYPES[e.t][2]?`<small>${e.h}h</small>`:''}</button>`;
+    const cls=['day',sel===k?'sel':'',(wd===0||wd===6)?'we':'',now.toDateString()===dt.toDateString()?'today':''].join(' ');
+    h+=`<button class="${cls}" onclick="pick('${k}')"><span>${dt.getDate()}</span>${t?`<i style="background:${t[1]}"></i>`:''}${e&&t[2]?`<small>${e.h}h</small>`:''}</button>`;
   }
   $('grid').innerHTML=h;
   $('legend').innerHTML=Object.values(TYPES).map(v=>`<span><i style="background:${v[1]}"></i>${v[0]}</span>`).join('');
@@ -239,57 +315,60 @@ function render(){
 
 function renderEditor(){
   const box=$('editor');
-  if(!sel){box.innerHTML='<h2>Select a day</h2><p class="muted">Tap a day to mark it as overtime, weekend work, leave or a holiday.</p>';return}
+  if(!sel){box.innerHTML='<h2>Select a day</h2><p class="muted">Tap a day to mark overtime, rest-day work, leave or a holiday.</p>';return}
   const e=S.days[sel]||{t:'work',h:0};
   const opts=Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===e.t?' selected':''}>${v[0]}</option>`).join('');
-  box.innerHTML=`<h2>${sel}</h2>
+  box.innerHTML=`<div class="grab"></div><h2>${sel}</h2>
     <div class="row"><select id="ty" onchange="renderHours()">${opts}</select><span id="hw"></span></div>
-    <div class="row"><button class="pri" onclick="apply()">Save day</button><button onclick="clearDay()">Clear</button></div>`;
+    <div class="row"><button class="pri" onclick="apply()">Save day</button><button onclick="clearDay()">Clear</button><button onclick="closeEd()">Close</button></div>`;
   renderHours();
 }
 function renderHours(){
   const t=$('ty').value, e=S.days[sel]||{h:1};
-  $('hw').innerHTML=TYPES[t][2]?`<label>Hours <input id="hh" type="number" step="0.5" min="0" max="16" value="${e.h||1}" style="width:90px"></label>`:'';
+  $('hw').innerHTML=TYPES[t][2]?`<label class="muted">Hours <input id="hh" type="number" inputmode="decimal" step="0.5" min="0" max="16" value="${e.h||1}" style="width:80px"></label>`:'';
 }
 function apply(){
   const t=$('ty').value;
-  if(t==='work')delete S.days[sel];
-  else S.days[sel]={t,h:TYPES[t][2]?(parseFloat($('hh').value)||0):0};
-  save(); render(); toast(`Saved ${sel}`);
-  const chip=document.querySelector('.day.sel'); if(chip)chip.classList.add('pop');
+  if(t==='work')delete S.days[sel]; else S.days[sel]={t,h:TYPES[t][2]?(parseFloat($('hh').value)||0):0};
+  save(); const k=sel; sel=null; closeEd(); render(); toast(`Saved ${k}`);
 }
-function clearDay(){delete S.days[sel];save();render();toast('Day cleared')}
+function clearDay(){delete S.days[sel];save();sel=null;closeEd();render();toast('Day cleared')}
+
+function donut(parts){
+  const total=parts.reduce((a,p)=>a+p.v,0)||1,R=46,C=2*Math.PI*R;let off=0;
+  const segs=parts.map(p=>{const len=p.v/total*C;const s=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${p.c}" stroke-width="14" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"/>`;off+=len;return s}).join('');
+  return `<circle cx="60" cy="60" r="${R}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="14"/>${segs}`;
+}
 
 function renderSummary(){
-  const c=monthCalc(Y,M), ym=`${Y}-${M}`;
+  const c=monthCalc(Y,M), ym=`${Y}-${M}`, net=netOf(c), extra=c.ot+c.hol;
   $('bonus').value=S.bonus[ym]||'';
-  const net=S.salary+c.ot+c.hol+c.bonus-c.ded-S.insurance;
   countTo($('net'),net,'NT$ '); $('net').dataset.v=net;
-  $('netNote').textContent=c.ot+c.hol>0?'Includes extra pay':'Base pay only';
-  $('sum').innerHTML=`
-    <div class="stat"><span class="muted">Base (incl. meal)</span><b>NT$ ${fmt(S.salary)}</b></div>
-    <div class="stat"><span class="muted">Overtime + holiday</span><b class="pos">+${fmt(c.ot+c.hol)}</b></div>
-    <div class="stat"><span class="muted">Leave deduction</span><b class="neg">−${fmt(c.ded)}</b></div>
-    <div class="stat"><span class="muted">Insurance</span><b class="neg">−${fmt(S.insurance)}</b></div>`;
+  $('netNote').textContent=extra>0?'Includes extra pay':'Base pay only';
+  $('donut').innerHTML=donut([{v:S.salary,c:'#fff'},{v:extra,c:'#fbbf24'},{v:c.bonus,c:'#34d399'}]);
+  $('kpis').innerHTML=[
+    ['Base (incl. meal)',`NT$ ${fmt(S.salary)}`,'#fff','',''],
+    ['Overtime + holiday',`+${fmt(extra)}`,'#fbbf24','pos',''],
+    ['Leave deduction',`−${fmt(c.ded)}`,'#ef4444','neg',''],
+    ['Insurance',`−${fmt(S.insurance)}`,'#94a3b8','neg','']
+  ].map(k=>`<div class="glass kpi"><span class="muted"><i style="background:${k[2]}"></i>${k[0]}</span><b class="num ${k[3]}">${k[1]}</b></div>`).join('');
+
   const left=Math.max(0,S.quota-c.annual);
-  $('leaveTxt').textContent=`Annual leave: ${c.annual} of ${S.quota} used, ${left} left. Sick: ${c.counts.sick} day(s). Personal: ${c.counts.personal} day(s).`;
+  $('leaveTxt').textContent=`${c.annual} of ${S.quota} days used, ${left} left. Sick: ${c.counts.sick}, personal: ${c.counts.personal}.`;
   $('leaveBar').style.width=(S.quota?Math.min(100,c.annual/S.quota*100):0)+'%';
+
+  const hist=[];let y=Y,m=M;
+  for(let i=0;i<6;i++){hist.unshift({y,m,net:netOf(monthCalc(y,m))});m--;if(m<1){m=12;y--}}
+  const max=Math.max(...hist.map(x=>x.net),1);
+  $('bars').innerHTML=hist.map((x,i)=>`<div class="bar ${i===5?'cur':''}"><b class="num">${(x.net/1000).toFixed(1)}k</b><div style="height:${Math.max(3,x.net/max*100)}%"></div>${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][x.m-1]}</div>`).join('');
   renderBreakdown(c);
 }
 
 function renderBreakdown(c){
-  const rows=c.lines.map(l=>`<tr><td>${l.label}</td><td>${l.text}</td><td class="r ${l.amt?'pos':'neg'}">${l.amt?'+'+fmt(l.amt):(l.ded?'−'+fmt(l.ded):'')}</td></tr>`).join('')
-    || '<tr><td colspan="3" class="muted">No overtime or leave this month.</td></tr>';
-  $('brk').innerHTML=`<h2>How this month is calculated</h2>
-    <p class="muted">Hourly rate = monthly salary ÷ days in the month the work was done ÷ 8. In a 30-day month that is <b>NT$ ${(S.salary/30/8).toFixed(2)}</b>; in a 31-day month, <b>NT$ ${(S.salary/31/8).toFixed(2)}</b>. Each day uses the length of the calendar month it falls in.</p>
-    <table><thead><tr><th>Date</th><th>Calculation</th><th class="r">Amount</th></tr></thead><tbody>${rows}</tbody></table>
-    <p class="muted" style="margin-top:14px"><b>Rules used</b><br>
-    Weekday overtime: first 2h ×1.34, next 2h ×1.67, beyond 4h ×2.67.<br>
-    Rest-day (e.g. Saturday): first 2h ×1.34, hours 3 to 8 ×1.67, beyond 8h ×2.67.<br>
-    Holiday work: one extra day's wage, plus overtime rules on hours beyond 8.<br>
-    Annual leave and national holidays are paid, so they add no pay.<br>
-    Personal leave deducts a full day (salary ÷ 30); sick leave deducts half a day (assumption, check against your slip).</p>
-    <p class="muted">Each pay period runs from the 26th of the previous month to the 25th, matching your company's cycle. Income tax is not included. Treat totals as estimates.</p>`;
+  $('brkList').innerHTML=c.lines.map(l=>`<div class="li"><div><b>${l.label}</b><span>${l.text}</span></div><div class="amt num ${l.amt?'pos':'neg'}">${l.amt?'+'+fmt(l.amt):'−'+fmt(l.ded)}</div></div>`).join('')
+    ||'<p class="muted">No overtime or leave in this pay period.</p>';
+  $('brkNote').innerHTML=`<p class="muted" style="margin-top:14px">Hourly rate = monthly salary ÷ days in the month the work was done ÷ 8: <b>NT$ ${(S.salary/30/8).toFixed(2)}</b> in a 30-day month, <b>NT$ ${(S.salary/31/8).toFixed(2)}</b> in a 31-day month.</p>
+  <p class="muted"><b>Rules used</b><br>Weekday overtime: first 2h ×1.34, next 2h ×1.67, beyond 4h ×2.67.<br>Rest-day work: first 2h ×1.34, hours 3 to 8 ×1.67, beyond 8h ×2.67.<br>Holiday work: one extra day’s wage plus overtime beyond 8h.<br>Personal leave deducts salary ÷ 30; sick leave deducts half a day (check against your slip).<br>Each pay period runs from the 26th to the 25th. Income tax is not included, so totals are estimates.</p>`;
 }
 
 function setBonus(v){S.bonus[`${Y}-${M}`]=parseFloat(v)||0;save();render();toast('Bonus updated')}
@@ -298,15 +377,13 @@ function setS(k,v){const n=parseFloat(v);if(!isNaN(n)){S[k]=n;save();render();to
 async function exportXlsx(){
   const msg=$('exp');
   if(typeof XLSX==='undefined'){msg.textContent='Excel library did not load. Check your connection.';return}
-  const wb=XLSX.utils.book_new();
-  const months=new Set();
+  const wb=XLSX.utils.book_new(), months=new Set();
   for(const k in S.days){const [yy,mm,dd]=k.split('-').map(Number);let pm=mm,py=yy;if(dd>=26){pm++;if(pm>12){pm=1;py++}}months.add(`${py}-${pad(pm)}`)}
   for(const k in S.bonus){const [y,m]=k.split('-');months.add(`${y}-${pad(+m)}`)}
   const sorted=[...months].sort();
   const summary=[['Pay period (26th to 25th)','Base (incl. meal)','Overtime','Holiday work','Performance bonus','Leave deduction','Insurance','Estimated take-home','Annual leave used','Sick days','Personal days']];
   for(const ym of sorted){
-    const [y,m]=ym.split('-').map(Number), dim=dimOf(y,m), c=monthCalc(y,m);
-    const net=S.salary+c.ot+c.hol+c.bonus-c.ded-S.insurance;
+    const [y,m]=ym.split('-').map(Number), c=monthCalc(y,m), net=netOf(c);
     summary.push([ym,S.salary,r2(c.ot),r2(c.hol),c.bonus,r2(c.ded),S.insurance,r2(net),c.annual,c.counts.sick,c.counts.personal]);
     const rows=[['Date','Weekday','Type','Hours','Hourly rate','Amount added','Amount deducted','Calculation']];
     for(const dt of periodDays(y,m)){
@@ -314,11 +391,7 @@ async function exportXlsx(){
       const dd=dimOf(dt.getFullYear(),dt.getMonth()+1), x=dayCalc(e,dd);
       rows.push([k,WD[dt.getDay()],TYPES[e.t][0],TYPES[e.t][2]?e.h:'',r2(S.salary/dd/8),r2(x.amt||0),r2(x.ded||0),x.text||'']);
     }
-    rows.push([],['Month totals'],
-      ['Hourly rate, 30-day month (salary ÷ 30 ÷ 8)',r2(S.salary/30/8)],['Hourly rate, 31-day month (salary ÷ 31 ÷ 8)',r2(S.salary/31/8)],
-      ['Base (incl. meal)',S.salary],['Overtime',r2(c.ot)],['Holiday work',r2(c.hol)],
-      ['Performance bonus',c.bonus],['Leave deduction',r2(c.ded)],['Insurance',S.insurance],
-      ['Estimated take-home',r2(net)]);
+    rows.push([],['Month totals'],['Base (incl. meal)',S.salary],['Overtime',r2(c.ot)],['Holiday work',r2(c.hol)],['Performance bonus',c.bonus],['Leave deduction',r2(c.ded)],['Insurance',S.insurance],['Estimated take-home',r2(net)]);
     const ws=XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:12},{wch:10},{wch:26},{wch:8},{wch:13},{wch:14},{wch:16},{wch:60}];
     XLSX.utils.book_append_sheet(wb,ws,'Pay '+ym);
@@ -328,20 +401,21 @@ async function exportXlsx(){
   XLSX.utils.book_append_sheet(wb,sws,'Summary');
   wb.SheetNames=['Summary',...wb.SheetNames.filter(n=>n!=='Summary')];
   const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  const name=`salary-calendar-${new Date().toISOString().slice(0,10)}.xlsx`;
   try{
-    const dl=await claude.use('downloads');
-    if(!dl){msg.textContent='Download is not available in this view.';return}
-    await dl.save({filename:`salary-calendar-${new Date().toISOString().slice(0,10)}.xlsx`,data:buf});
-    msg.textContent='Saved.';
-  }catch(err){
-    msg.textContent=err&&err.code==='declined'?'Download cancelled.':'Download is not available here.';
-  }
+    const dl=(typeof claude!=='undefined')?await claude.use('downloads'):null;
+    if(dl){await dl.save({filename:name,data:buf});msg.textContent='Saved.';return}
+  }catch(err){if(err&&err.code==='declined'){msg.textContent='Download cancelled.';return}}
+  try{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);msg.textContent='Saved.';
+  }catch(e){msg.textContent='Download failed on this browser.'}
 }
 
-render();
-</script>
-<script>
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+go('ov'); render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
 </body>
 </html>
