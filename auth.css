@@ -5,7 +5,7 @@
 :root[data-theme="dark"]{--bg:#0a0e1c;--glass:rgba(255,255,255,.07);--card:rgba(255,255,255,.06);--ink:#eaeefb;--muted:#97a1bd;--line:rgba(255,255,255,.1);--soft:rgba(255,255,255,.06);--shadow:0 10px 30px rgba(0,0,0,.4);color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
-body{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow-x:hidden}
+body{font-family:system-ui,-apple-system,"Noto Sans TC","Noto Sans Arabic",sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60vmax 60vmax at 10% -10%,rgba(91,108,255,.35),transparent 60%),radial-gradient(50vmax 50vmax at 100% 20%,rgba(155,92,255,.28),transparent 60%),radial-gradient(40vmax 40vmax at 40% 110%,rgba(16,185,129,.2),transparent 60%)}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:10px 14px;font-weight:600;transition:transform .12s,background .2s}
@@ -32,10 +32,10 @@ h2{font-size:16px;margin:0 0 10px}
 .acard h2{text-align:center;font-size:22px;margin:0}
 .acard .sub{text-align:center;margin:6px 0 18px}
 .f{position:relative;margin-bottom:12px}
-.f input{width:100%;padding:20px 58px 8px 14px;border-radius:14px}
-.f label{position:absolute;left:14px;top:15px;font-size:15px;color:var(--muted);pointer-events:none;transition:all .15s}
+.f input{width:100%;padding-block:20px 8px;padding-inline:14px 58px;border-radius:14px}
+.f label{position:absolute;inset-inline-start:14px;top:15px;font-size:15px;color:var(--muted);pointer-events:none;transition:all .15s}
 .f input:focus+label,.f input:not(:placeholder-shown)+label{top:6px;font-size:11px;color:var(--primary)}
-.eye{position:absolute;right:6px;top:8px;padding:6px 10px;font-size:12px;border-radius:10px}
+.eye{position:absolute;inset-inline-end:6px;top:8px;padding:6px 10px;font-size:12px;border-radius:10px}
 .strength{height:5px;border-radius:9px;background:var(--soft);overflow:hidden;margin:-4px 0 10px}
 .strength div{height:100%;width:0;transition:width .3s,background .3s}
 .big{width:100%;padding:14px;font-size:16px;margin-top:4px}
@@ -53,3 +53,6 @@ h2{font-size:16px;margin:0 0 10px}
 .ver{text-align:center;margin-top:14px;font-size:11px;color:var(--muted)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.langbar{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));inset-inline-end:14px;z-index:5}
+.langbar select{padding:8px 10px;border-radius:12px;font-size:13px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}

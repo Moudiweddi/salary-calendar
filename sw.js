@@ -1,6 +1,6 @@
 // Salary Calendar v3.0 service worker: network first, cache as offline fallback
-const CACHE = 'salary-calendar-v3-3';
-const FILES = ['./', 'index.html', 'login.html', 'signup.html', 'recover.html', 'auth.css', 'auth.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const CACHE = 'salary-calendar-v3-4';
+const FILES = ['./', 'index.html', 'login.html', 'signup.html', 'recover.html', 'auth.css', 'auth.js', 'i18n.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });

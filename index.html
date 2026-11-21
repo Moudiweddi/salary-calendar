@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Salary Calendar v3.3</title>
+<title>Salary Calendar v3.4</title>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b1020">
@@ -19,7 +19,7 @@
 :root[data-theme="dark"]{--bg:#0a0e1c;--glass:rgba(255,255,255,.07);--card:rgba(255,255,255,.06);--ink:#eaeefb;--muted:#97a1bd;--line:rgba(255,255,255,.1);--soft:rgba(255,255,255,.06);--shadow:0 10px 30px rgba(0,0,0,.4);color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
-body{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow-x:hidden}
+body{font-family:system-ui,-apple-system,"Noto Sans TC","Noto Sans Arabic",sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60vmax 60vmax at 10% -10%,rgba(91,108,255,.35),transparent 60%),radial-gradient(50vmax 50vmax at 100% 20%,rgba(155,92,255,.28),transparent 60%),radial-gradient(40vmax 40vmax at 40% 110%,rgba(16,185,129,.2),transparent 60%)}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:10px 14px;font-weight:600;transition:transform .12s,background .2s}
@@ -59,7 +59,7 @@ main{padding:14px 14px calc(92px + env(safe-area-inset-bottom,0px));display:grid
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .kpi{padding:14px}
 .kpi b{display:block;font-size:19px;margin-top:4px}
-.kpi i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.kpi i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:6px}
 .pos{color:var(--ok)}.neg{color:var(--bad)}
 
 /* charts */
@@ -83,7 +83,7 @@ main{padding:14px 14px calc(92px + env(safe-area-inset-bottom,0px));display:grid
 .day small{font-size:9px;font-weight:600;opacity:.8;line-height:1}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .legend span{font-size:11px;background:var(--soft);border-radius:99px;padding:4px 9px;color:var(--muted)}
-.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:5px}
 .editor .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
 .editor select{flex:1;min-width:0}
 .scrim{display:none}
@@ -95,7 +95,7 @@ main{padding:14px 14px calc(92px + env(safe-area-inset-bottom,0px));display:grid
 .li .amt{font-weight:700;white-space:nowrap}
 .set{display:grid;gap:12px}
 .set label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
-.set input{width:130px;text-align:right}
+.set input{width:130px;text-align:end}.set select{max-width:180px}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;opacity:0;transition:all .3s;pointer-events:none;font-size:14px;z-index:40;max-width:88vw}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -164,7 +164,7 @@ try{if(!sessionStorage.getItem('salarySess')){document.documentElement.style.dis
       </div>
       <div class="kpis" id="kpis"></div>
       <div class="ov" style="display:grid;gap:14px">
-        <div class="glass"><h2>Last 6 pay periods</h2><div class="bars" id="bars"></div></div>
+        <div class="glass"><h2>Last 6 pay periods</h2><div class="bars" id="bars" dir="ltr"></div></div>
         <div class="glass"><h2>Annual leave</h2><div class="muted" id="leaveTxt"></div><div class="prog"><div id="leaveBar"></div></div>
           <h2 style="margin-top:18px">Performance bonus this period</h2>
           <input id="bonus" type="number" min="0" inputmode="numeric" placeholder="NT$ 0" onchange="setBonus(this.value)" style="width:100%">
@@ -187,6 +187,7 @@ try{if(!sessionStorage.getItem('salarySess')){document.documentElement.style.dis
     <section class="view" id="v-set">
       <div class="glass set">
         <h2>Settings</h2>
+        <label>Language <select data-lang aria-label="Language"></select></label>
         <label>Monthly salary incl. meal (NT$) <input id="s_salary" type="number" inputmode="numeric" onchange="setS('salary',this.value)"></label>
         <label>Insurance per month (NT$) <input id="s_ins" type="number" inputmode="numeric" onchange="setS('insurance',this.value)"></label>
         <label>Annual leave per year (days) <input id="s_quota" type="number" inputmode="numeric" onchange="setS('quota',this.value)"></label>
@@ -201,11 +202,12 @@ try{if(!sessionStorage.getItem('salarySess')){document.documentElement.style.dis
 <nav class="tabs" id="tabs"></nav>
 <div class="toast" id="toast"></div>
 
+<script src="i18n.js?v=3.4"></script>
 <script>
 const KEY='salaryCalV1';
 const WK=[[2,1.34],[4,1.67],[Infinity,2.67]];
 const RT=[[2,1.34],[8,1.67],[Infinity,2.67]];
-const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let WD=[];const calcWD=()=>{WD=[...Array(7)].map((_,i)=>new Date(2023,0,1+i).toLocaleDateString(LOC(),{weekday:'short'}))};calcWD();
 const TYPES={
   work:['Normal work','#94a3b8',0],
   ot:['Weekday overtime','#f59e0b',1],
@@ -229,7 +231,7 @@ const K=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
 const fmt=n=>Math.round(n).toLocaleString('en-US');
 const r2=n=>Math.round(n*100)/100;
 const dimOf=(y,m)=>new Date(y,m,0).getDate();
-function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),1800)}
+function toast(msg,v){const el=$('toast');el.textContent=t(msg,v);el.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove('show'),1800)}
 
 function tierPay(h,rate,tiers){
   let rem=h,prev=0,amt=0,parts=[];
@@ -243,14 +245,14 @@ function tierPay(h,rate,tiers){
 }
 function dayCalc(e,dim){
   const rate=S.salary/dim/8, wage=S.salary/dim, w30=S.salary/30;
-  if(e.t==='ot'){const r=tierPay(e.h,rate,WK);return{amt:r.amt,text:`Weekday overtime ${e.h}h: ${r.parts.join(' + ')}`}}
-  if(e.t==='restwork'){const r=tierPay(e.h,rate,RT);return{amt:r.amt,text:`Rest-day work ${e.h}h: ${r.parts.join(' + ')}`}}
+  if(e.t==='ot'){const r=tierPay(e.h,rate,WK);return{amt:r.amt,text:t('Weekday overtime {h}h: {parts}',{h:e.h,parts:r.parts.join(' + ')})}}
+  if(e.t==='restwork'){const r=tierPay(e.h,rate,RT);return{amt:r.amt,text:t('Rest-day work {h}h: {parts}',{h:e.h,parts:r.parts.join(' + ')})}}
   if(e.t==='holwork'){
     const extra=Math.max(0,e.h-8), r=tierPay(extra,rate,WK);
-    return{amt:wage+r.amt,text:`Holiday work ${e.h}h: 1 day wage ${fmt(wage)}${extra?' + '+r.parts.join(' + '):''}`};
+    return{amt:wage+r.amt,text:t('Holiday work {h}h: 1 day wage {w}',{h:e.h,w:fmt(wage)})+(extra?' + '+r.parts.join(' + '):'')};
   }
-  if(e.t==='sick')return{ded:w30/2,text:"Sick leave: half a day’s wage deducted"};
-  if(e.t==='personal')return{ded:w30,text:"Personal leave: a full day’s wage deducted"};
+  if(e.t==='sick')return{ded:w30/2,text:t('Sick leave: half a day’s wage deducted')};
+  if(e.t==='personal')return{ded:w30,text:t('Personal leave: a full day’s wage deducted')};
   return{};
 }
 function periodDays(y,m){
@@ -293,7 +295,7 @@ const ICON={
 };
 const NAV=[['ov','Overview'],['cal','Calendar'],['brk','Breakdown'],['set','Settings']];
 function navHTML(){return NAV.map(([k,l])=>`<button class="nv ${view===k?'on':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg><span class="lb">${l}</span></button>`).join('')}
-function go(v){view=v;closeEd();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$('tabs').innerHTML=navHTML();$('sideNav').innerHTML=navHTML();window.scrollTo({top:0,behavior:'smooth'})}
+function go(v){view=v;closeEd();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$('tabs').innerHTML=navHTML();$('sideNav').innerHTML=navHTML();walk($('tabs'));walk($('sideNav'));window.scrollTo({top:0,behavior:'smooth'})}
 function theme(){const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dark?'light':'dark'}
 
 function shift(n){M+=n;if(M<1){M=12;Y--}if(M>12){M=1;Y++}sel=null;closeEd();render()}
@@ -302,7 +304,7 @@ function closeEd(){$('editor').classList.remove('open');$('scrim').classList.rem
 
 function render(){
   const days=periodDays(Y,M), first=days[0].getDay(), now=new Date();
-  const fmtD=d=>d.toLocaleString('en-US',{month:'short',day:'numeric'});
+  const fmtD=d=>d.toLocaleString(LOC(),{month:'short',day:'numeric'});
   $('title').textContent=`${fmtD(days[0])} – ${fmtD(days[days.length-1])}, ${days[days.length-1].getFullYear()}`;
   let h='';
   WD.forEach(w=>h+=`<div class="wd">${w}</div>`);
@@ -317,6 +319,7 @@ function render(){
   $('legend').innerHTML=Object.values(TYPES).map(v=>`<span><i style="background:${v[1]}"></i>${v[0]}</span>`).join('');
   renderEditor(); renderSummary();
   $('s_salary').value=S.salary; $('s_ins').value=S.insurance; $('s_quota').value=S.quota;
+  walk(document.body);
 }
 
 function renderEditor(){
@@ -336,7 +339,7 @@ function renderHours(){
 function apply(){
   const t=$('ty').value;
   if(t==='work')delete S.days[sel]; else S.days[sel]={t,h:TYPES[t][2]?(parseFloat($('hh').value)||0):0};
-  save(); const k=sel; sel=null; closeEd(); render(); toast(`Saved ${k}`);
+  save(); const k=sel; sel=null; closeEd(); render(); toast('Saved {k}',{k});
 }
 function clearDay(){delete S.days[sel];save();sel=null;closeEd();render();toast('Day cleared')}
 
@@ -360,20 +363,20 @@ function renderSummary(){
   ].map(k=>`<div class="glass kpi"><span class="muted"><i style="background:${k[2]}"></i>${k[0]}</span><b class="num ${k[3]}">${k[1]}</b></div>`).join('');
 
   const left=Math.max(0,S.quota-c.annual);
-  $('leaveTxt').textContent=`${c.annual} of ${S.quota} days used, ${left} left. Sick: ${c.counts.sick}, personal: ${c.counts.personal}.`;
+  $('leaveTxt').textContent=t('{a} of {q} days used, {l} left. Sick: {s}, personal: {p}.',{a:c.annual,q:S.quota,l:left,s:c.counts.sick,p:c.counts.personal});
   $('leaveBar').style.width=(S.quota?Math.min(100,c.annual/S.quota*100):0)+'%';
 
   const hist=[];let y=Y,m=M;
   for(let i=0;i<6;i++){hist.unshift({y,m,net:netOf(monthCalc(y,m))});m--;if(m<1){m=12;y--}}
   const max=Math.max(...hist.map(x=>x.net),1);
-  $('bars').innerHTML=hist.map((x,i)=>`<div class="bar ${i===5?'cur':''}"><b class="num">${(x.net/1000).toFixed(1)}k</b><div style="height:${Math.max(3,x.net/max*100)}%"></div>${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][x.m-1]}</div>`).join('');
+  $('bars').innerHTML=hist.map((x,i)=>`<div class="bar ${i===5?'cur':''}"><b class="num">${(x.net/1000).toFixed(1)}k</b><div style="height:${Math.max(3,x.net/max*100)}%"></div>${new Date(2023,x.m-1,1).toLocaleDateString(LOC(),{month:'short'})}</div>`).join('');
   renderBreakdown(c);
 }
 
 function renderBreakdown(c){
   $('brkList').innerHTML=c.lines.map(l=>`<div class="li"><div><b>${l.label}</b><span>${l.text}</span></div><div class="amt num ${l.amt?'pos':'neg'}">${l.amt?'+'+fmt(l.amt):'−'+fmt(l.ded)}</div></div>`).join('')
     ||'<p class="muted">No overtime or leave in this pay period.</p>';
-  $('brkNote').innerHTML=`<p class="muted" style="margin-top:14px">Hourly rate = monthly salary ÷ days in the month the work was done ÷ 8: <b>NT$ ${(S.salary/30/8).toFixed(2)}</b> in a 30-day month, <b>NT$ ${(S.salary/31/8).toFixed(2)}</b> in a 31-day month.</p>
+  $('brkNote').innerHTML=`<p class="muted" style="margin-top:14px">${t('Hourly rate = monthly salary ÷ days in the month the work was done ÷ 8: <b>NT$ {a}</b> in a 30-day month, <b>NT$ {b}</b> in a 31-day month.',{a:(S.salary/30/8).toFixed(2),b:(S.salary/31/8).toFixed(2)})}</p>
   <p class="muted"><b>Rules used</b><br>Weekday overtime: first 2h ×1.34, next 2h ×1.67, beyond 4h ×2.67.<br>Rest-day work: first 2h ×1.34, hours 3 to 8 ×1.67, beyond 8h ×2.67.<br>Holiday work: one extra day’s wage plus overtime beyond 8h.<br>Personal leave deducts salary ÷ 30; sick leave deducts half a day (check against your slip).<br>Each pay period runs from the 26th to the 25th. Income tax is not included, so totals are estimates.</p>`;
 }
 
@@ -382,8 +385,8 @@ function setS(k,v){const n=parseFloat(v);if(!isNaN(n)){S[k]=n;save();render();to
 
 async function exportXlsx(){
   const msg=$('exp');
-  if(typeof XLSX==='undefined'){msg.textContent='Excel library did not load. Check your connection.';return}
-  const wb=XLSX.utils.book_new(), months=new Set();
+  if(typeof XLSX==='undefined'){msg.textContent=t('Excel library did not load. Check your connection.');return}
+  const wb=XLSX.utils.book_new(), months=new Set(), SUM=t('Summary'), tr=rs=>rs.map(r=>r.map(x=>typeof x==='string'?t(x):x));
   for(const k in S.days){const [yy,mm,dd]=k.split('-').map(Number);let pm=mm,py=yy;if(dd>=26){pm++;if(pm>12){pm=1;py++}}months.add(`${py}-${pad(pm)}`)}
   for(const k in S.bonus){const [y,m]=k.split('-');months.add(`${y}-${pad(+m)}`)}
   const sorted=[...months].sort();
@@ -398,26 +401,26 @@ async function exportXlsx(){
       rows.push([k,WD[dt.getDay()],TYPES[e.t][0],TYPES[e.t][2]?e.h:'',r2(S.salary/dd/8),r2(x.amt||0),r2(x.ded||0),x.text||'']);
     }
     rows.push([],['Month totals'],['Base (incl. meal)',S.salary],['Overtime',r2(c.ot)],['Holiday work',r2(c.hol)],['Performance bonus',c.bonus],['Leave deduction',r2(c.ded)],['Insurance',S.insurance],['Estimated take-home',r2(net)]);
-    const ws=XLSX.utils.aoa_to_sheet(rows);
+    const ws=XLSX.utils.aoa_to_sheet(tr(rows));
     ws['!cols']=[{wch:12},{wch:10},{wch:26},{wch:8},{wch:13},{wch:14},{wch:16},{wch:60}];
-    XLSX.utils.book_append_sheet(wb,ws,'Pay '+ym);
+    XLSX.utils.book_append_sheet(wb,ws,t('Pay')+' '+ym);
   }
-  const sws=XLSX.utils.aoa_to_sheet(summary);
+  const sws=XLSX.utils.aoa_to_sheet(tr(summary));
   sws['!cols']=Array(11).fill({wch:18});
-  XLSX.utils.book_append_sheet(wb,sws,'Summary');
-  wb.SheetNames=['Summary',...wb.SheetNames.filter(n=>n!=='Summary')];
+  XLSX.utils.book_append_sheet(wb,sws,SUM);
+  wb.SheetNames=[SUM,...wb.SheetNames.filter(n=>n!==SUM)];
   const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
   const name=`salary-calendar-${new Date().toISOString().slice(0,10)}.xlsx`;
   try{
     const dl=(typeof claude!=='undefined')?await claude.use('downloads'):null;
-    if(dl){await dl.save({filename:name,data:buf});msg.textContent='Saved.';return}
-  }catch(err){if(err&&err.code==='declined'){msg.textContent='Download cancelled.';return}}
+    if(dl){await dl.save({filename:name,data:buf});msg.textContent=t('Saved.');return}
+  }catch(err){if(err&&err.code==='declined'){msg.textContent=t('Download cancelled.');return}}
   try{
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
     a.download=name;document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href),4000);msg.textContent='Saved.';
-  }catch(e){msg.textContent='Download failed on this browser.'}
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);msg.textContent=t('Saved.');
+  }catch(e){msg.textContent=t('Download failed on this browser.')}
 }
 
 /* ----- session (login pages: login.html, signup.html, recover.html) ----- */
@@ -429,7 +432,13 @@ document.addEventListener('visibilitychange',()=>{
   else if(hiddenAt&&Date.now()-hiddenAt>60000)logout();   // lock after 1 minute in the background
 });
 window.addEventListener('pageshow',e=>{if(e.persisted&&!sessionStorage.getItem('salarySess'))location.replace('login.html')});
-go('ov'); render();
+window.onLang=()=>{
+  calcWD();
+  const bt=document.querySelectorAll('.top button'),rtl=document.documentElement.dir==='rtl';
+  bt[0].innerHTML=rtl?'&rarr;':'&larr;';bt[1].innerHTML=rtl?'&larr;':'&rarr;';
+  go(view);render();
+};
+applyLang();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
 </body>
